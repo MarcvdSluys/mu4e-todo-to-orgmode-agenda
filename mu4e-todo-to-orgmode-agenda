@@ -25,9 +25,14 @@ function writeLines {
     for FILE in `find $DIR -type f`
     do
 	FROM=`grep '^From: ' "$FILE" | head -1 | sed -e 's|^From: \(.\)|\U\1|'`
+	
+	# Remove some utf-8 code as well:
 	SUBJECT=`grep '^Subject: ' "$FILE" | head -1 \
-		      | sed -e 's|^Subject: \(.\)|\U\1|' -e 's| re: | |I' -e 's|^re: ||I' \
-		      	       		    		 -e 's| fwd: | |I' -e 's|^fwd: ||I'`
+		      | sed -e 's|^Subject: \(.\)|\U\1|' \
+		      	    -e 's| re: | |I' -e 's|^re: ||I' \
+			    -e 's| fwd: | |I' -e 's|^fwd: ||I' \
+			    -e 's|=?utf-8?q?||g' -e 's|?=||g' -e 's|=2C|,|g' -e 's|_| |g' `
+	
 	DATE=`grep '^Date: ' "$FILE" | sed -e 's|^Date: ||' | head -1`
 	
 	echo "*** TODO $PRIO $SUBJECT"
@@ -53,4 +58,3 @@ echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specifi
 #            Mu subdir  Org tag   Prio       Out file
 writeLines  "Private"  ":Priv:"  "[#C]"  >>  $ORGFILE
 writeLines  "Work"     ":Work:"  "[#C]"  >>  $ORGFILE
-
