@@ -35,12 +35,32 @@ function writeLines {
 	
 	DATE=`grep '^Date: ' "$FILE" | sed -e 's|^Date: ||' | head -1`
 	
+	# Message ID is sometimess on the next line from '^Message-ID', but always seems to end in '>':
+	MSGID=`grep -A1 '^Message-ID' $FILE | sed -n '
+		    		      	      	     # if the first line copy the pattern to the hold buffer
+						     1h
+						     # if not the first line then append the pattern to the hold buffer
+						     1!H
+						     # if the last line then ...
+						     $ {
+						             # copy from the hold to the pattern buffer
+							     g
+                                                             # do the search and replace
+                                                             '"s|Message-ID:.*<||"'
+                                                             # print
+                                                             p
+						     }' \
+					     `
+	MSGID=`echo $MSGID | sed -e 's|>.*$||g'`
+	# echo $MSGID
+	
 	echo "*** TODO $PRIO $SUBJECT"
 	echo "  :PROPERTIES:"
 	echo "  :ACCOUNT:     $SUBDIR"
 	echo "  :FROM:        $FROM"
 	echo "  :DATE:        $DATE"
-	echo "  :LINK:        file:$FILE"
+# 	echo "  :LINK:        file:$FILE"
+	echo "  :LINK:        [[mu4e:msgid:$MSGID][$SUBJECT]]"
 	echo "  :END:"
     done	    
 }
@@ -58,3 +78,4 @@ echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specifi
 #            Mu subdir  Org tag   Prio       Out file
 writeLines  "Private"  ":Priv:"  "[#C]"  >>  $ORGFILE
 writeLines  "Work"     ":Work:"  "[#C]"  >>  $ORGFILE
+
