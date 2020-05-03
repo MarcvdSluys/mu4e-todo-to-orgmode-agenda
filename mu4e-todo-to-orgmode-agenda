@@ -1,6 +1,6 @@
 #!/bin/bash
 
-##  Look in my mu4e Todo mail folder, and put the email subjects as headlines in my Orgmode todo list
+##  Look in my mu4e Todo mail folders, and put the email subjects as headlines in my Orgmode todo list
 ##  My todo mail folders are all called TodoL (L indicating a Local folder)
 ##  MvdS, 2020-05-03
 
@@ -8,23 +8,31 @@ MAILDIR="$HOME/.emacs_mail"
 ORGFILE="$HOME/.org/Email.org"
 
 
-# Write a todo line:
 function writeLines {
+    # Write a todo line:
+    # Args:
+    #   1) SUBDIR: mu4e subdir of MAILDIR = email account
+    #   2) TAG:    Orgmode tag(s), e.g. :Work:
+    #   3) PRIO:   Orgmode priority, e.g. [#C]
+    
     SUBDIR=$1
     TAG=$2
+    PRIO=$3
     
     DIR="$MAILDIR/$SUBDIR/TodoL"
     
     echo "** $SUBDIR                                                                        $TAG"
     for FILE in `find $DIR -type f`
     do
-	FROM=`grep '^From: ' "$FILE" | sed -e 's|^From: \(.\)|\U\1|' | head -1`
-	SUBJECT=`grep '^Subject: ' "$FILE" | sed -e 's|^Subject: \(.\)|\U\1|' | head -1`
+	FROM=`grep '^From: ' "$FILE" | head -1 | sed -e 's|^From: \(.\)|\U\1|'`
+	SUBJECT=`grep '^Subject: ' "$FILE" | head -1 \
+		      | sed -e 's|^Subject: \(.\)|\U\1|' -e 's| re: | |I' -e 's|^re: ||I' \
+		      	       		    		 -e 's| fwd: | |I' -e 's|^fwd: ||I'`
 	DATE=`grep '^Date: ' "$FILE" | sed -e 's|^Date: ||' | head -1`
 	
-	echo "*** TODO $SUBJECT"
+	echo "*** TODO $PRIO $SUBJECT"
 	echo "  :PROPERTIES:"
-	echo "  :CATEGORY:    $SUBDIR"
+	echo "  :ACCOUNT:     $SUBDIR"
 	echo "  :FROM:        $FROM"
 	echo "  :DATE:        $DATE"
 	echo "  :LINK:        file:$FILE"
@@ -42,7 +50,7 @@ function writeLines {
 echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specified in file name
 
 # Add todos per email account/subdir:
-#            Mu subdir  Org tag      Out file
-writeLines  "Private"  ":Priv:"  >>  $ORGFILE
-writeLines  "Work"     ":Work:"  >>  $ORGFILE
+#            Mu subdir  Org tag   Prio       Out file
+writeLines  "Private"  ":Priv:"  "[#C]"  >>  $ORGFILE
+writeLines  "Work"     ":Work:"  "[#C]"  >>  $ORGFILE
 
