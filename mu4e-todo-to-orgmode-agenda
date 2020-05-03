@@ -1,8 +1,13 @@
 #!/bin/bash
 
 ##  Look in my mu4e Todo mail folders, and put the email subjects as headlines in my Orgmode todo list
-##  My todo mail folders are all called TodoL (L indicating a Local folder)
-##  MvdS, 2020-05-03
+##  My todo mail folders are all called TodoL (L indicating a Local folder).
+##  
+##  Initial version: 2020-05-03
+##  
+##  Copyright 2020, Marc van der Sluys
+##  See https://github.com/MarcvdSluys/mu4e-todo-to-orgmode-agenda for more info.
+
 
 MAILDIR="$HOME/.emacs_mail"
 ORGFILE="$HOME/.org/Email.org"
