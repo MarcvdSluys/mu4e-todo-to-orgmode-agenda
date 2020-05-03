@@ -11,17 +11,17 @@ ORGFILE="$HOME/.org/Email.org"
 function writeLines {
     # Write a todo line:
     # Args:
-    #   1) SUBDIR: mu4e subdir of MAILDIR = email account
-    #   2) TAG:    Orgmode tag(s), e.g. :Work:
-    #   3) PRIO:   Orgmode priority, e.g. [#C]
+    #   1) ACCOUNT: mu4e subdir of MAILDIR = email account
+    #   2) TAG:     Orgmode tag(s), e.g. :Work:
+    #   3) PRIO:    Orgmode priority, e.g. [#C]
     
-    SUBDIR=$1
+    ACCOUNT=$1
     TAG=$2
     PRIO=$3
     
-    DIR="$MAILDIR/$SUBDIR/TodoL"
+    DIR="$MAILDIR/$ACCOUNT/TodoL"
     
-    echo "** $SUBDIR                                                                        $TAG"
+    echo "** $ACCOUNT                                                                        $TAG"
     for FILE in `find $DIR -type f`
     do
 	FROM=`grep '^From: ' "$FILE" | head -1 | sed -e 's|^From: \(.\)|\U\1|'`
@@ -63,9 +63,9 @@ function writeLines {
 	MSGID=`echo $MSGID | sed -e 's|>.*$||g'`
 	# echo $MSGID
 	
-	echo "*** TODO $PRIO $HEADLINE"
+	echo "*** TODO $PRIO $ACCOUNT: $HEADLINE"
 	echo "  :PROPERTIES:"
-	echo "  :ACCOUNT:     $SUBDIR"
+	echo "  :ACCOUNT:     $ACCOUNT"
 	echo "  :FROM:        $FROM"
 	echo "  :DATE:        $DATE"
 # 	echo "  :LINK:        file:$FILE"
@@ -84,6 +84,6 @@ function writeLines {
 echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specified in file name
 
 # Add todos per email account/subdir:
-#            Mu subdir  Org tag   Prio       Out file
+#           Mu account  Org tag   Prio       Out file
 writeLines  "Private"  ":Priv:"  "[#C]"  >>  $ORGFILE
 writeLines  "Work"     ":Work:"  "[#C]"  >>  $ORGFILE
