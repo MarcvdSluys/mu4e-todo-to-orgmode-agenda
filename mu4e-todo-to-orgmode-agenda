@@ -1,0 +1,48 @@
+#!/bin/bash
+
+##  Look in my mu4e Todo mail folder, and put the email subjects as headlines in my Orgmode todo list
+##  My todo mail folders are all called TodoL (L indicating a Local folder)
+##  MvdS, 2020-05-03
+
+MAILDIR="$HOME/.emacs_mail"
+ORGFILE="$HOME/.org/Email.org"
+
+
+# Write a todo line:
+function writeLines {
+    SUBDIR=$1
+    TAG=$2
+    
+    DIR="$MAILDIR/$SUBDIR/TodoL"
+    
+    echo "** $SUBDIR                                                                        $TAG"
+    for FILE in `find $DIR -type f`
+    do
+	FROM=`grep '^From: ' "$FILE" | sed -e 's|^From: \(.\)|\U\1|' | head -1`
+	SUBJECT=`grep '^Subject: ' "$FILE" | sed -e 's|^Subject: \(.\)|\U\1|' | head -1`
+	DATE=`grep '^Date: ' "$FILE" | sed -e 's|^Date: ||' | head -1`
+	
+	echo "*** TODO $SUBJECT"
+	echo "  :PROPERTIES:"
+	echo "  :CATEGORY:    $SUBDIR"
+	echo "  :FROM:        $FROM"
+	echo "  :DATE:        $DATE"
+	echo "  :LINK:        file:$FILE"
+	echo "  :END:"
+    done	    
+}
+
+
+# Count iso todos?
+# COUNT=`find $DIR -type f | wc -l`
+# echo $COUNT
+
+# Start Orgmode file:
+# echo "* Email                                                                   :Email:"  > $ORGFILE
+echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specified in file name
+
+# Add todos per email account/subdir:
+#            Mu subdir  Org tag      Out file
+writeLines  "Private"  ":Priv:"  >>  $ORGFILE
+writeLines  "Work"     ":Work:"  >>  $ORGFILE
+
