@@ -1,9 +1,10 @@
 #!/bin/bash
 
 ##  Look in my mu4e Todo mail folders, and put the email subjects as headlines in my Orgmode todo list
-##  My todo mail folders are all called TodoL (L indicating a Local folder).
+##  My todo mail folders are typically called TodoL or LaterL (L indicating a Local folder).
 ##  
-##  Initial version: 2020-05-03
+##  2020-05-03: Initial version
+##  2020-05-13: Decouple account name and mail subdir
 ##  
 ##  Copyright 2020, Marc van der Sluys
 ##  See https://github.com/MarcvdSluys/mu4e-todo-to-orgmode-agenda for more info.
@@ -16,15 +17,17 @@ ORGFILE="$HOME/.org/Email.org"
 function writeLines {
     # Write a todo line:
     # Args:
-    #   1) ACCOUNT: mu4e subdir of MAILDIR = email account
-    #   2) TAG:     Orgmode tag(s), e.g. :Work:
-    #   3) PRIO:    Orgmode priority, e.g. [#C]
+    #   1) ACCOUNT: email account name
+    #   2) SUBDIR:  mu4e subdir of MAILDIR = email account
+    #   3) TAG:     Orgmode tag(s), e.g. :Work:
+    #   4) PRIO:    Orgmode priority, e.g. [#C]
     
     ACCOUNT=$1
-    TAG=$2
-    PRIO=$3
+    SUBDIR=$2
+    TAG=$3
+    PRIO=$4
     
-    DIR="$MAILDIR/$ACCOUNT/TodoL"
+    DIR="$MAILDIR/$SUBDIR"
     
     echo "** $ACCOUNT                                                                        $TAG"
     for FILE in `find $DIR -type f`
@@ -89,6 +92,6 @@ function writeLines {
 echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specified in file name
 
 # Add todos per email account/subdir:
-#           Mu account  Org tag   Prio       Out file
-writeLines  "Private"  ":Priv:"  "[#C]"  >>  $ORGFILE
-writeLines  "Work"     ":Work:"  "[#C]"  >>  $ORGFILE
+#           Mu account  Maildir          Org tag   Prio       Out file
+writeLines  "Private"  "Private/TodoL"  ":Priv:"  "[#C]"  >>  $ORGFILE
+writeLines  "Work"     "Work/TodoL"     ":Work:"  "[#C]"  >>  $ORGFILE
