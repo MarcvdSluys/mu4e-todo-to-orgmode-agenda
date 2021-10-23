@@ -11,7 +11,7 @@
 
 
 MAILDIR="$HOME/.emacs_mail"
-ORGFILE="$HOME/.org/Email.org"
+ORGFILE="$HOME/.org/AssembleOrgFiles/Email.org"
 
 
 function writeLines {
@@ -93,5 +93,12 @@ echo "* Email"  > $ORGFILE   # Tag not needed, since category is already specifi
 
 # Add todos per email account/subdir:
 #           Mu account  Maildir          Org tag   Prio       Out file
-writeLines  "Private"  "Private/TodoL"  ":Priv:"  "[#C]"  >>  $ORGFILE
-writeLines  "Work"     "Work/TodoL"     ":Work:"  "[#C]"  >>  $ORGFILE
+# writeLines  "Private"  "Private/TodoL"  ":Priv:"     "[#C]"  >>  $ORGFILE
+# writeLines  "Work"     "Work/TodoL"     ":Work:"     "[#C]"  >>  $ORGFILE
+writeLines  "Linux"    "Linux/TodoL"    ":Hack:"     "[#D]"  >>  $ORGFILE
+writeLines  "MvdS"     "MvdS/TodoL"     ":Priv:"     "[#D]"  >>  $ORGFILE
+writeLines  "HWC"      "HWC/TodoL"      ":Sky:"      "[#D]"  >>  $ORGFILE
+writeLines  "RU"       "RU/TodoL"       ":RU:"       "[#D]"  >>  $ORGFILE
+# writeLines  "HAN"      "HAN/TodoL"      ":HAN:"      "[#B]"  >>  $ORGFILE
+# writeLines  "HAN"      "HAN/LaterL"     ":HAN:"      "[#D]"  >>  $ORGFILE
+writeLines  "Nikhef"   "Nikhef/TodoL"   ":Nikhef:"   "[#B]"  >>  $ORGFILE
